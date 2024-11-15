@@ -1,60 +1,73 @@
-// // src/Register.js
-// import React from 'react';
-// import { registerUser } from '../api';
+import React, { useState } from "react";
+import axios from "axios";
 
-// const Register = () => {
-//   return (
-//     <div style={styles.container}>
-//       <h2>Register</h2>
-//       <form style={styles.form}>
-//         <input type="text" placeholder="Full Name" style={styles.input} required />
-//         <input type="email" placeholder="Email" style={styles.input} required />
-//         <input type="password" placeholder="Password" style={styles.input} required />
-//         <button type="submit" style={styles.button}>Register</button>
-//       </form>
-//     </div>
-//   );
-// };
+function Register() {
+    const [formData, setFormData] = useState({
+        username: "",
+        email: "",
+        password: "",
+    });
 
-// const styles = {
-//   container: { padding: '20px' },
-//   form: { display: 'flex', flexDirection: 'column', gap: '10px' },
-//   input: { padding: '10px', fontSize: '16px' },
-//   button: {
-//     padding: '10px',
-//     backgroundColor: '#0066cc',
-//     border: 'none',
-//     color: 'white',
-//     borderRadius: '5px',
-//     cursor: 'pointer',
-//   },
-// };
-
-// export default Register;
-
-import React, { useState } from 'react';
-import { registerUser } from './api'; // Import the register function
-
-const Register = () => {
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
-    const [email, setEmail] = useState('');
+    const handleChange = (e) => {
+        setFormData({
+            ...formData,
+            [e.target.name]: e.target.value,
+        });
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const userData = { username, password, email };
-        const response = await registerUser(userData);
-        console.log(response); // Handle the response accordingly
+        try {
+            const response = await axios.post("http://localhost:8081/auth/register", formData, {
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+            alert(response.data); // Notify user of successful registration
+        } catch (error) {
+            console.error("Error during registration:", error);
+            alert("Registration failed. Please try again.");
+        }
     };
 
     return (
-        <form onSubmit={handleSubmit}>
-            <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} placeholder="Username" required />
-            <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password" required />
-            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" required />
-            <button type="submit">Register</button>
-        </form>
+        <div>
+            <h2>Register</h2>
+            <form onSubmit={handleSubmit}>
+                <div>
+                    <label>Username:</label>
+                    <input
+                        type="text"
+                        name="username"
+                        value={formData.username}
+                        onChange={handleChange}
+                        required
+                    />
+                </div>
+                <div>
+                    <label>Email:</label>
+                    <input
+                        type="email"
+                        name="email"
+                        value={formData.email}
+                        onChange={handleChange}
+                        required
+                    />
+                </div>
+                <div>
+                    <label>Password:</label>
+                    <input
+                        type="password"
+                        name="password"
+                        value={formData.password}
+                        onChange={handleChange}
+                        required
+                    />
+                </div>
+                <button type="submit">Register</button>
+            </form>
+        </div>
     );
-};
+}
 
 export default Register;
