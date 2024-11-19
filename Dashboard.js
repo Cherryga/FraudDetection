@@ -1,11 +1,12 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Carousel } from "react-responsive-carousel";
 import { motion } from "framer-motion";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import "./Dashboard.css";
 
 const Dashboard = () => {
-  const [activeCard, setActiveCard] = useState(null);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [activeCard, setActiveCard] = useState(null); // Added state for active card
 
   const cards = [
     {
@@ -28,8 +29,20 @@ const Dashboard = () => {
     },
   ];
 
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollY = window.scrollY;
+      setIsScrolled(scrollY > 50);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
   return (
-    <div className="dashboard-container">
+    <div className={`dashboard-container ${isScrolled ? "scrolled" : ""}`}>
       <motion.header
         className="dashboard-header"
         initial={{ opacity: 0, y: -30 }}
@@ -72,7 +85,7 @@ const Dashboard = () => {
           </div>
           <div>
             <img
-              src="https://i.postimg.cc/Qtvv0Mrd/fraud-analytics.png"
+              src="https://media.licdn.com/dms/image/D4D12AQFdUZmKZLH8yQ/article-cover_image-shrink_720_1280/0/1698851269979?e=2147483647&v=beta&t=_WYG-GKEp-yYTdrSPjN19aOfZszngdhstgwwXBfkOQw"
               alt="Secure transactions"
             />
             <p className="legend">🔒 Secure & Reliable Transactions</p>
