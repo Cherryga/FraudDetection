@@ -1,4 +1,4 @@
-    body {
+body {
     font-family: 'Roboto', sans-serif;
     background: #121212;
     color: #e0e0e0;
@@ -117,4 +117,5 @@
 .dashboard-container.scrolled {
   background-color: #2c3e50; 
 }
+
   
