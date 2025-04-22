@@ -1,31 +1,31 @@
 import React, { useState } from 'react';
+import './FraudDetection.css';
 
 function FraudDetection() {
     const [transaction, setTransaction] = useState({
-        Time: "",
-        V1: "",
-        V2: "",
-        V3: "",
-        Amount: ""
+        Time: 100,  // Default time value
+        V1: 0, V2: 0, V3: 0, V4: 0, V5: 0, V6: 0, V7: 0, V8: 0, V9: 0, V10: 0,
+        V11: 0, V12: 0, V13: 0, V14: 0, V15: 0, V16: 0, V17: 0, V18: 0, V19: 0, V20: 0,
+        V21: 0, V22: 0, V23: 0, V24: 0, V25: 0, V26: 0, V27: 0, V28: 0,
+        Amount: 200  // Default Amount value
     });
+
     const [result, setResult] = useState('');
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
-        const response = await fetch('http://localhost:8080/api/fraud/predict', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(transaction),  // Send the transaction data as JSON
-        });
-
-        const data = await response.json();  // Parse the response JSON
-        if (data.prediction) {
-            setResult(`Fraud Prediction: ${data.prediction}`);
-        } else {
-            setResult('Error predicting fraud.');
+        try {
+            const response = await fetch('http://127.0.0.1:5000/predict', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(transaction),
+            });
+            const data = await response.json();
+            setResult(`Fraud Prediction: ${data.predictions[0]}`);
+        } catch (error) {
+            setResult('Error communicating with the backend.');
         }
     };
 
@@ -37,52 +37,25 @@ function FraudDetection() {
     };
 
     return (
-        <div>
+        <div className="fraud-detection">
             <h1>Fraud Detection</h1>
-            <form onSubmit={handleSubmit}>
-                <input
-                    type="text"
-                    name="Time"
-                    value={transaction.Time}
-                    onChange={handleChange}
-                    placeholder="Time"
-                    required
-                />
-                <input
-                    type="text"
-                    name="V1"
-                    value={transaction.V1}
-                    onChange={handleChange}
-                    placeholder="V1"
-                    required
-                />
-                <input
-                    type="text"
-                    name="V2"
-                    value={transaction.V2}
-                    onChange={handleChange}
-                    placeholder="V2"
-                    required
-                />
-                <input
-                    type="text"
-                    name="V3"
-                    value={transaction.V3}
-                    onChange={handleChange}
-                    placeholder="V3"
-                    required
-                />
-                <input
-                    type="text"
-                    name="Amount"
-                    value={transaction.Amount}
-                    onChange={handleChange}
-                    placeholder="Amount"
-                    required
-                />
-                <button type="submit">Analyze Transaction</button>
+            <form onSubmit={handleSubmit} className="transaction-form">
+                {Object.keys(transaction).map((key, index) => (
+                    key !== 'predictions' && (
+                        <input
+                            key={index}
+                            type="number"
+                            name={key}
+                            value={transaction[key]}
+                            onChange={handleChange}
+                            placeholder={key}
+                            required={key === 'Amount'}
+                        />
+                    )
+                ))}
+                <button type="submit" className="submit-btn">Analyze Transaction</button>
             </form>
-            {result && <p>{result}</p>}
+            {result && <p className="result">{result}</p>}
         </div>
     );
 }

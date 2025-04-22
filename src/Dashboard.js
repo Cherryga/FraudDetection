@@ -1,188 +1,175 @@
-// // import React, { useEffect, useState } from 'react';
-// import './Dashboard.css';  // Move styling to an external CSS file for better management
-
-// const Dashboard = () => {
-//   const [transactions, setTransactions] = useState([]);
-//   const [flaggedTransactions, setFlaggedTransactions] = useState([]);
-
-//   useEffect(() => {
-//     const fetchTransactions = async () => {
-//       const data = {
-//         transactions: [
-//           { id: 1, date: '2024-09-27', amount: 100, status: 'Completed' },
-//           { id: 2, date: '2024-09-28', amount: 200, status: 'Completed' },
-//           { id: 3, date: '2024-09-29', amount: 500, status: 'Pending' },
-//         ],
-//         flaggedTransactions: [
-//           { id: 4, date: '2024-09-30', amount: 3000, status: 'Suspicious' },
-//         ],
-//       };
-
-//       setTransactions(data.transactions);
-//       setFlaggedTransactions(data.flaggedTransactions);
-//     };
-
-//     fetchTransactions();
-//   }, []);
-
-//   return (
-//     <div className="dashboard-container">
-//       <header className="dashboard-header">
-//         <h1 className="dashboard-title">Fraud Detection Dashboard</h1>
-//         <div className="auth-buttons">
-//           {/* Add buttons for sign in, register, etc. */}
-//         </div>
-//       </header>
-
-//       <div className="transactions-section">
-//         <h2 className="section-title">Your Transactions</h2>
-//         <ul className="transactions-list">
-//           {transactions.map((transaction) => (
-//             <li key={transaction.id} className="transaction-item">
-//               <span>{transaction.date}</span>
-//               <span>${transaction.amount}</span>
-//               <span>{transaction.status}</span>
-//             </li>
-//           ))}
-//         </ul>
-//       </div>
-
-//       <div className="flagged-section">
-//         <h2 className="section-title">Flagged Transactions</h2>
-//         <ul className="transactions-list">
-//           {flaggedTransactions.length > 0 ? (
-//             flaggedTransactions.map((transaction) => (
-//               <li key={transaction.id} className="transaction-item flagged">
-//                 <span>{transaction.date}</span>
-//                 <span>${transaction.amount}</span>
-//                 <span>Suspicious</span>
-//               </li>
-//             ))
-//           ) : (
-//             <li className="no-flagged">No flagged transactions.</li>
-//           )}
-//         </ul>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default Dashboard;
-
-import React, { useEffect, useState } from 'react';
-import { Carousel } from 'react-responsive-carousel';
-import "react-responsive-carousel/lib/styles/carousel.min.css";  
-import './Dashboard.css';
+// src/Dashboard.js
+import React, { useEffect, useState } from "react";
+import { Carousel } from "react-responsive-carousel";
+import { motion } from "framer-motion";
+import "react-responsive-carousel/lib/styles/carousel.min.css";
+import './Dashboard.css'; // You can add styles for both the dashboard and footer here
 
 const Dashboard = () => {
-  const [transactions, setTransactions] = useState([]);
-  const [flaggedTransactions, setFlaggedTransactions] = useState([]);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [activeCard, setActiveCard] = useState(null);
+
+  const cards = [
+    {
+      id: 1,
+      title: "🌟 Real-time Monitoring",
+      description: "Analyze every transaction in real time, identifying unusual activities with AI precision.",
+      moreInfo: "Real-time monitoring leverages AI to detect anomalies instantly, ensuring secure financial operations and protecting against fraud.",
+    },
+    {
+      id: 2,
+      title: "📈 Machine Learning Algorithms",
+      description: "Utilize advanced machine learning models to detect fraudulent transactions with high accuracy.",
+      moreInfo: "Our ML models are trained on large datasets to identify fraud patterns, ensuring accuracy and reducing false positives.",
+    },
+    {
+      id: 3,
+      title: "🚨 Flagged Transactions",
+      description: "Automatically flag suspicious transactions for further investigation.",
+      moreInfo: "Flagged transactions are reviewed in real-time, allowing you to take action immediately and safeguard your assets.",
+    },
+  ];
 
   useEffect(() => {
-    const fetchTransactions = async () => {
-      const data = {
-        transactions: [
-          { id: 1, date: '2024-09-27', amount: 100, status: 'Completed' },
-          { id: 2, date: '2024-09-28', amount: 200, status: 'Completed' },
-          { id: 3, date: '2024-09-29', amount: 500, status: 'Pending' },
-        ],
-        flaggedTransactions: [
-          { id: 4, date: '2024-09-30', amount: 3000, status: 'Suspicious' },
-        ],
-      };
-
-      setTransactions(data.transactions);
-      setFlaggedTransactions(data.flaggedTransactions);
+    const handleScroll = () => {
+      const scrollY = window.scrollY;
+      setIsScrolled(scrollY > 50);
     };
 
-    fetchTransactions();
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
   }, []);
 
+  const cardVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { type: "spring", stiffness: 100, delay: 0.5 },
+    },
+  };
+
+  const staggeredVariants = {
+    hidden: {},
+    visible: {
+      transition: { staggerChildren: 0.3 },
+    },
+  };
+
+  const sectionVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 1 } },
+  };
+
   return (
-    <div className="dashboard-container">
-      <header className="dashboard-header">
-        <h1 className="dashboard-title">AI-Powered Fraud Detection System</h1>
-      </header>
+    <motion.div
+      className={`dashboard-container ${isScrolled ? "scrolled" : ""}`}
+      initial="hidden"
+      animate="visible"
+      variants={sectionVariants}
+    >
+      {/* Header Section */}
+      <motion.header
+        className="dashboard-header"
+        initial={{ opacity: 0, y: -30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 1 }}
+      >
+        <h1 className="dashboard-title">🚀 AI-Powered Fraud Detection System</h1>
+        <p className="dashboard-subtitle">
+          Empowering your financial security with cutting-edge AI.
+        </p>
+      </motion.header>
 
-      
-      <Carousel showThumbs={false} infiniteLoop autoPlay interval={3000} className="carousel-container">
-        <div>
-          <img src="https://gbgplc.com/media/ejhedsjh/transaction-fraud-social-1.png" alt="Real-time monitoring" />
-          <p className="legend">Real-time Financial Monitoring</p>
-        </div>
-        <div>
-          <img src="https://media.licdn.com/dms/image/C5612AQFGKnchbUDRfg/article-cover_image-shrink_720_1280/0/1636688482799?e=2147483647&v=beta&t=kv_ZR9YkfyVHyHVBgHiI6LeXCzgXVVUo4JX8A6N8TZo" alt="AI-powered fraud detection" />
-          <p className="legend">AI-Powered Fraud Detection</p>
-        </div>
-        <div>
-          <img src="https://cdn.prod.website-files.com/5c6283f39ea6205dee7cf941/5e77612699e08415b62b9868_online_payment_fraud.jpg" alt="Flagged suspicious transactions" />
-          <p className="legend">Flagged Suspicious Transactions</p>
-        </div>
-        <div>
-          <img src="https://innowise.com/wp-content/uploads/2024/02/Transaction-fraud-scoring.png" alt="Dashboard overview" />
-          <p className="legend">Dashboard Overview</p>
-        </div>
-      </Carousel>
-
-   
-      <div className="cards-section">
-        <div className="card" id ="card1">
-          <h3>Real-time Monitoring</h3>
-          <p>Analyze every transaction in real time, identifying unusual activities with AI precision.</p>
-        </div>
-        <div className="card">
-          <h3>Machine Learning Algorithms</h3>
-          <p>Utilize advanced machine learning models to detect fraudulent transactions with high accuracy.</p>
-        </div>
-        <div className="card">
-          <h3>Flagged Transactions</h3>
-          <p>Automatically flag suspicious transactions for further investigation.</p>
-        </div>
-      </div>
-<div className="demo-transactions">
-        <h2 className="demo-title">Demo Transactions</h2>
-        
-        
-        <div className="transactions-block">
-          <div className="transactions-section">
-            <h3 className="section-title">Your Transactions</h3>
-            <ul className="transactions-list">
-              {transactions.map((transaction) => (
-                <li key={transaction.id} className="transaction-item">
-                  <span>{transaction.date}</span>
-                  <span>${transaction.amount}</span>
-                  <span>{transaction.status}</span>
-                </li>
-              ))}
-            </ul>
+      {/* Carousel Section */}
+      <motion.div
+        className="carousel-section"
+        initial={{ scale: 0.8 }}
+        animate={{ scale: 1 }}
+        transition={{ duration: 0.5, delay: 0.5 }}
+      >
+        <Carousel
+          showThumbs={false}
+          infiniteLoop
+          autoPlay
+          interval={4000}
+          className="carousel-container"
+        >
+          <div>
+            <img
+              src="https://gbgplc.com/media/ejhedsjh/transaction-fraud-social-1.png"
+              alt="Real-time monitoring"
+            />
+            <p className="legend">📊 Real-time Financial Monitoring</p>
           </div>
-
-          <div className="flagged-section">
-            <h3 className="section-title">Flagged Transactions</h3>
-            <ul className="transactions-list">
-              {flaggedTransactions.length > 0 ? (
-                flaggedTransactions.map((transaction) => (
-                  <li key={transaction.id} className="transaction-item flagged">
-                    <span>{transaction.date}</span>
-                    <span>${transaction.amount}</span>
-                    <span>Suspicious</span>
-                  </li>
-                ))
-              ) : (
-                <li className="no-flagged">No flagged transactions.</li>
-              )}
-            </ul>
+          <div>
+            <img
+              src="https://nexocode.com/images/ecommerce-fraud-detection-and-prevention-thumbnail-1.webp"
+              alt="AI-powered fraud detection"
+            />
+            <p className="legend">🤖 AI-Powered Fraud Detection</p>
           </div>
-        </div>
-      </div>
+          <div>
+            <img
+              src="https://cdn.prod.website-files.com/5fbe376a36d4106214faaf3c/62200f9fbd736d0bb2002721_20220302-Credit%20Card%20Fraud%20Detection_Blog%20Thumbnail%20Image.png"
+              alt="Secure transactions"
+            />
+            <p className="legend">🔒 Secure & Reliable Transactions</p>
+          </div>
+        </Carousel>
+      </motion.div>
 
+      {/* Cards Section */}
+      <motion.div
+        className="cards-section"
+        initial="hidden"
+        animate="visible"
+        variants={staggeredVariants}
+        transition={{ duration: 1, delay: 0.5 }}
+      >
+        {cards.map((card) => (
+          <motion.div
+            key={card.id}
+            className={`card ${activeCard === card.id ? "active" : ""}`}
+            onMouseEnter={() => setActiveCard(card.id)}
+            onMouseLeave={() => setActiveCard(null)}
+            variants={cardVariants}
+          >
+            <h3>{card.title}</h3>
+            <p>{card.description}</p>
+            {activeCard === card.id && (
+              <motion.div
+                className="card-expanded"
+                variants={{
+                  hidden: { opacity: 0, y: 10 },
+                  visible: {
+                    opacity: 1,
+                    y: 0,
+                    transition: { type: "spring", stiffness: 100, delay: 0.8 },
+                  },
+                }}
+              >
+                <p>{card.moreInfo}</p>
+              </motion.div>
+            )}
+          </motion.div>
+        ))}
+      </motion.div>
+
+      {/* Footer Section */}
       <footer className="footer">
-        <p>© 2024 Fraud Detection System | Contact Us: support@fraud-detect.com</p>
-        <div className="footer-links">
-          <a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a> | <a href="#">Contact</a>
+        <div className="footer-content">
+          <p>&copy; 2024 Fraud Detection Inc. | All Rights Reserved</p>
+          <div className="footer-links">
+            <a href="#">Privacy Policy</a>
+            <a href="#">Terms of Service</a>
+            <a href="#">Contact</a>
+          </div>
         </div>
       </footer>
-    </div>
+    </motion.div>
   );
 };
 
